@@ -1,25 +1,9 @@
-app.name: ewm-main-service
+app:
+  name: ewm-main-service
 
 spring:
-  sql.init:
-    mode: ALWAYS
-    schema-locations: classpath:schema-postgres.sql
-  main.banner-mode: OFF
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6541/ewm-main
-    username: dbuser
-    password: 12345
-  jpa:
-    generate-ddl: false
-    hibernate.ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  jackson:
-    serialization:
-      INDENT_OUTPUT: true
+  main:
+    banner-mode: OFF
 
 logging:
   level:
