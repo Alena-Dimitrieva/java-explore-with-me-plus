@@ -1,0 +1,104 @@
+$kind: http-request
+name: Получение информации о категории по её идентификатору
+url: "{{baseUrl}}/categories/:catId"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: catId
+    value: "{{catid}}"
+    description: (Required) id категории
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        pm.collectionVariables.set(\"response\", category)\r
+
+      \        pm.collectionVariables.set(\"catid\", category.id)\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = pm.collectionVariables.get('response');\r
+
+      const target = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Категория должна содержать поля: id, name\", function () {\r
+
+      pm.expect(target).to.have.property('id');\r
+
+      pm.expect(target).to.have.property('name');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(source.id).equal(target.id, 'Идентификатор категории должен соответствовать идентификатору в запросе');\r
+
+      \    pm.expect(source.name).equal(target.name, 'Название категории должно соответствовать названию категории с указанным идентификатором');\r
+
+      });"
+    language: text/javascript
+order: 3000

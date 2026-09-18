@@ -1,0 +1,106 @@
+$kind: http-request
+description: "Обратите внимание: с категорий не должно быть связано ни одного события."
+url: "{{baseUrl}}/admin/categories/:catId"
+method: DELETE
+headers:
+  Accept: application/json
+pathVariables:
+  catId: "{{catid}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        const findedCategory = await api.findCategory(category.id);\r
+
+      \        pm.collectionVariables.set(\"catid\", category.id)\r
+
+      \        pm.collectionVariables.set(\"response\", findedCategory)\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 204\", function () {\r
+
+      \    pm.response.to.have.status(204);\r
+
+      });\r
+
+      \r
+
+      source = pm.collectionVariables.get('response');\r
+
+      catId = pm.collectionVariables.get('catid');\r
+
+      \r
+
+      pm.test(\"Категория должна быть найдена до удаления\", function () {\r
+
+      \    pm.expect(source.id).equal(catId, 'Идентификтор категории должен совпадать с удаляемым');\r
+
+      });\r
+
+      \r
+
+      pm.sendRequest({\r
+
+      \        url: pm.collectionVariables.get(\"baseUrl\") + \"/categories/\" + catId,\r
+
+      \        method: 'GET',\r
+
+      \    }, (error, response) => {\r
+
+      \        pm.test(\"Категория не должна быть найдена после удаления\", function () {\r
+
+      \            pm.expect(response.code).to.eql(404);\r
+
+      \        });\r
+
+      \    });"
+    language: text/javascript
+order: 4000

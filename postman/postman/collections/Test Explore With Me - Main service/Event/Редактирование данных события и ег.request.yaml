@@ -1,0 +1,163 @@
+$kind: http-request
+name: Редактирование данных события и его статуса (отклонение/публикация).
+description: |-
+  Обратите внимание:
+   - дата начала события должна быть не ранее чем за час от даты публикации.
+  - событие должно быть в состоянии ожидания публикации
+url: "{{baseUrl}}/admin/events/:eventId"
+method: PATCH
+headers:
+  Accept: application/json
+pathVariables:
+  - key: eventId
+    value: "{{eid}}"
+    description: (Required) id события
+body:
+  type: text
+  content: "{{request_body}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r
+
+      \        let event2 = rnd.getEvent(category.id)\r
+
+      \        event2.stateAction = \"PUBLISH_EVENT\"\r
+
+      \        pm.collectionVariables.set('response', event2);\r
+
+      \        pm.collectionVariables.set(\"eid\", event.id)\r
+
+      \        pm.request.body.update({\r
+
+      \            mode: 'raw',\r
+
+      \            raw: event2,\r
+
+      \            options: { raw: { language: 'json' } }\r
+
+      \        });\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            // выполняем наш скрипт\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = pm.collectionVariables.get('response');\r
+
+      const target = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Событие должно содержать поля: id, title, annotation, category, paid, eventDate, initiator, description, participantLimit, state, createdOn, publishedOn, location, requestModeration\", function () {\r
+
+      pm.expect(target).to.have.property('id');\r
+
+      pm.expect(target).to.have.property('title');\r
+
+      pm.expect(target).to.have.property('annotation');\r
+
+      pm.expect(target).to.have.property('category');\r
+
+      pm.expect(target).to.have.property('paid');\r
+
+      pm.expect(target).to.have.property('eventDate');\r
+
+      pm.expect(target).to.have.property('initiator');\r
+
+      pm.expect(target).to.have.property('description');\r
+
+      pm.expect(target).to.have.property('participantLimit');\r
+
+      pm.expect(target).to.have.property('state');\r
+
+      pm.expect(target).to.have.property('createdOn');\r
+
+      pm.expect(target).to.have.property('publishedOn');\r
+
+      pm.expect(target).to.have.property('location');\r
+
+      pm.expect(target).to.have.property('requestModeration');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(source.annotation).equal(target.annotation, 'Аннотация события должна соответствовать искомому событию');\r
+
+      \    pm.expect(source.paid.toString()).equal(target.paid.toString(), 'Стоимость события должна соответствовать искомому событию');\r
+
+      \    pm.expect(source.eventDate).equal(target.eventDate, 'Дата проведения события должна соответствовать искомому событию');\r
+
+      \    pm.expect(source.description).equal(target.description, 'Описание события должно соответствовать искомому событию');\r
+
+      \    pm.expect(source.title).equal(target.title, 'Название события должно соответствовать искомому событию');\r
+
+      \    pm.expect(source.participantLimit.toString()).equal(target.participantLimit.toString(), 'Лимит участников события должен соответствовать искомому событию');\r
+
+      });"
+    language: text/javascript
+order: 10000

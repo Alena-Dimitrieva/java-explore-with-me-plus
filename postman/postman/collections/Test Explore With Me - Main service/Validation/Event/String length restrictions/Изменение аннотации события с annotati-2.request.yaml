@@ -1,0 +1,104 @@
+$kind: http-request
+name: Изменение аннотации события с annotation.length < 20 (user endpoint)
+description: "Обратите внимание: Отменить можно только событие в состоянии ожидания модерации."
+url: "{{baseUrl}}/users/:userId/events/:eventId"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: userId
+    value: "{{uid}}"
+    description: (Required) id текущего пользователя
+  - key: eventId
+    value: "{{eid}}"
+    description: (Required) id отменяемого события
+body:
+  type: json
+  content: "{{request_body}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r
+
+      \        pm.collectionVariables.set(\"uid\", user.id);\r
+
+      \        pm.collectionVariables.set(\"eid\", event.id);\r
+
+      \        pm.request.body.update({\r
+
+      \            mode: 'raw',\r
+
+      \            raw: JSON.stringify({\r
+
+      \                annotation: rnd.getWord(19)\r
+
+      \            }),\r
+
+      \            options: { raw: { language: 'json' } }\r
+
+      \        });\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.badRequest;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r\n"
+    language: text/javascript
+order: 21000

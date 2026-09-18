@@ -1,0 +1,143 @@
+$kind: http-request
+name: Поиск пользователей без параметра ids
+url: "{{baseUrl}}/admin/users?from={{fromId}}&size=100000"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: ids
+    value: "{{uid}}"
+    disabled: true
+    description: id пользователей
+  - key: from
+    value: "{{fromId}}"
+    description: количество элементов, которые нужно пропустить для формирования текущего набора
+  - key: size
+    value: "100000"
+    description: количество элементов в наборе
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    let compilation;\r
+
+      \    try {\r
+
+      \        let user1 = rnd.getUser();\r
+
+      \        user1 = await api.addUser(user1);\r
+
+      \r
+
+      \        let user2 = rnd.getUser()\r
+
+      \        user2 = await api.addUser(user2);\r
+
+      \        //pm.collectionVariables.set('fromId', user1.id);\r
+
+      \        pm.collectionVariables.set('source1', user1);\r
+
+      \        pm.collectionVariables.set('source2', user2);\r
+
+      \r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const target = pm.response.json();\r
+
+      const source1 = pm.collectionVariables.get('source1');\r
+
+      const source2 = pm.collectionVariables.get('source2');\r
+
+      \r
+
+      pm.test(\"Пользователи должны содержать поля: id, name, email\", function () {\r
+
+      \    pm.expect(target[target.length-2]).to.have.property('id');\r
+
+      \    pm.expect(target[target.length-2]).to.have.property('name');\r
+
+      \    pm.expect(target[target.length-2]).to.have.property('email');\r
+
+      \    pm.expect(target[target.length-1]).to.have.property('id');\r
+
+      \    pm.expect(target[target.length-1]).to.have.property('name');\r
+
+      \    pm.expect(target[target.length-1]).to.have.property('email');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные последних двух пользователей должны совпадать с данными добавленных пользователей\", function () {\r
+
+      \    pm.expect(target[target.length-2].id).to.equal(source1.id);\r
+
+      \    pm.expect(target[target.length-2].name).to.equal(source1.name);\r
+
+      \    pm.expect(target[target.length-2].email).to.equal(source1.email);\r
+
+      \    pm.expect(target[target.length-1].id).to.equal(source2.id);\r
+
+      \    pm.expect(target[target.length-1].name).to.equal(source2.name);\r
+
+      \    pm.expect(target[target.length-1].email).to.equal(source2.email);\r
+
+      });\r\n"
+    language: text/javascript
+order: 2000
