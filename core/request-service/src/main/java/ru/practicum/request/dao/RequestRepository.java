@@ -21,23 +21,23 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
     int countByEventIdAndStatus(Long eventId, ParticipationStatus status);
 
     @Query("""
-			SELECT r.eventId as eventId,
-			COUNT(r) as count
-			FROM ParticipationRequest r
-			WHERE r.eventId IN :eventIds
-			AND r.status = :status
-			GROUP BY r.eventId
-			""")
+            SELECT r.eventId as eventId,
+            COUNT(r) as count
+            FROM ParticipationRequest r
+            WHERE r.eventId IN :eventIds
+            AND r.status = :status
+            GROUP BY r.eventId
+            """)
     List<EventRequestCount> countConfirmedRequestsByEventIds(List<Long> eventIds, ParticipationStatus status);
 
     @Modifying
     @Transactional
     @Query("""
-			UPDATE ParticipationRequest pr
-			SET pr.status = 'REJECTED'
-			WHERE pr.eventId = :eventId
-			AND pr.status=:status
-			""")
+            UPDATE ParticipationRequest pr
+            SET pr.status = 'REJECTED'
+            WHERE pr.eventId = :eventId
+            AND pr.status=:status
+            """)
     int rejectPendingRequests(Long eventId, ParticipationStatus status);
 
     boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);

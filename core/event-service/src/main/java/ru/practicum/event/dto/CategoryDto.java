@@ -7,10 +7,10 @@ import lombok.Builder;
 @Builder
 public record CategoryDto(
 
-		Long id,
+        Long id,
 
-		@NotBlank
-		@Size(min = 1, max = 50)
-		String name
+        @NotBlank
+        @Size(min = 1, max = 50)
+        String name
 ) {
 }

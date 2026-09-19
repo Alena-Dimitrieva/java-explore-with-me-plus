@@ -27,93 +27,93 @@ import java.util.List;
 @Component
 public class StatClient {
 
-	private final String statsServiceId;
-	private final DiscoveryClient discoveryClient;
-	private final RestTemplate rest;
-	private final RetryTemplate retryTemplate;
+    private final String statsServiceId;
+    private final DiscoveryClient discoveryClient;
+    private final RestTemplate rest;
+    private final RetryTemplate retryTemplate;
 
-	public StatClient(@Value("${stats-server.id:stats-server}") String statsServiceId,
-					  DiscoveryClient discoveryClient,
-					  RestTemplateBuilder builder) {
-		this.statsServiceId = statsServiceId;
-		this.discoveryClient = discoveryClient;
-		this.rest = builder.build();
-		this.retryTemplate = buildRetryTemplate();
-	}
+    public StatClient(@Value("${stats-server.id:stats-server}") String statsServiceId,
+                      DiscoveryClient discoveryClient,
+                      RestTemplateBuilder builder) {
+        this.statsServiceId = statsServiceId;
+        this.discoveryClient = discoveryClient;
+        this.rest = builder.build();
+        this.retryTemplate = buildRetryTemplate();
+    }
 
-	private RetryTemplate buildRetryTemplate() {
-		RetryTemplate template = new RetryTemplate();
+    private RetryTemplate buildRetryTemplate() {
+        RetryTemplate template = new RetryTemplate();
 
-		FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-		backOffPolicy.setBackOffPeriod(1000L);
-		template.setBackOffPolicy(backOffPolicy);
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(1000L);
+        template.setBackOffPolicy(backOffPolicy);
 
-		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-		retryPolicy.setMaxAttempts(3);
-		template.setRetryPolicy(retryPolicy);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+        template.setRetryPolicy(retryPolicy);
 
-		return template;
-	}
+        return template;
+    }
 
-	private ServiceInstance getInstance() {
-		List<ServiceInstance> instances = discoveryClient.getInstances(statsServiceId);
-		if (instances == null || instances.isEmpty()) {
-			throw new IllegalStateException(
-					"Сервис статистики с id=" + statsServiceId + " не найден в реестре Eureka");
-		}
-		return instances.getFirst();
-	}
+    private ServiceInstance getInstance() {
+        List<ServiceInstance> instances = discoveryClient.getInstances(statsServiceId);
+        if (instances == null || instances.isEmpty()) {
+            throw new IllegalStateException(
+                    "Сервис статистики с id=" + statsServiceId + " не найден в реестре Eureka");
+        }
+        return instances.getFirst();
+    }
 
-	private URI makeUri(String path) {
-		ServiceInstance instance = retryTemplate.execute(ctx -> getInstance());
-		return URI.create("http://" + instance.getHost() + ":" + instance.getPort() + path);
-	}
+    private URI makeUri(String path) {
+        ServiceInstance instance = retryTemplate.execute(ctx -> getInstance());
+        return URI.create("http://" + instance.getHost() + ":" + instance.getPort() + path);
+    }
 
-	public void hit(EndpointHitDto endpointHitDto) {
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+    public void hit(EndpointHitDto endpointHitDto) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-			HttpEntity<EndpointHitDto> requestEntity = new HttpEntity<>(endpointHitDto, headers);
+            HttpEntity<EndpointHitDto> requestEntity = new HttpEntity<>(endpointHitDto, headers);
 
-			rest.exchange(
-					makeUri("/hit"),
-					HttpMethod.POST,
-					requestEntity,
-					Void.class
-			);
-		} catch (Exception e) {
-			log.error("Ошибка записи: {}", endpointHitDto, e);
-		}
-	}
+            rest.exchange(
+                    makeUri("/hit"),
+                    HttpMethod.POST,
+                    requestEntity,
+                    Void.class
+            );
+        } catch (Exception e) {
+            log.error("Ошибка записи: {}", endpointHitDto, e);
+        }
+    }
 
-	public List<ViewStatsDto> getStat(StatsRequest statsRequest) {
-		try {
-			UriComponentsBuilder builder = UriComponentsBuilder
-					.fromUri(makeUri("/stats"))
-					.queryParam("start", statsRequest.getStart())
-					.queryParam("end", statsRequest.getEnd())
-					.queryParam("unique", statsRequest.getUnique());
+    public List<ViewStatsDto> getStat(StatsRequest statsRequest) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUri(makeUri("/stats"))
+                    .queryParam("start", statsRequest.getStart())
+                    .queryParam("end", statsRequest.getEnd())
+                    .queryParam("unique", statsRequest.getUnique());
 
-			List<String> uris = statsRequest.getUris();
+            List<String> uris = statsRequest.getUris();
 
-			if (uris != null && !uris.isEmpty()) {
-				builder.queryParam("uris", uris);
-			}
+            if (uris != null && !uris.isEmpty()) {
+                builder.queryParam("uris", uris);
+            }
 
-			URI uri = builder.encode().build().toUri();
+            URI uri = builder.encode().build().toUri();
 
-			return rest.exchange(
-					uri,
-					HttpMethod.GET,
-					null,
-					new ParameterizedTypeReference<List<ViewStatsDto>>() {
-					}
-			).getBody();
+            return rest.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<ViewStatsDto>>() {
+                    }
+            ).getBody();
 
-		} catch (Exception e) {
-			log.error("Ошибка записи: {}", statsRequest, e);
-			return null;
-		}
-	}
+        } catch (Exception e) {
+            log.error("Ошибка записи: {}", statsRequest, e);
+            return null;
+        }
+    }
 }

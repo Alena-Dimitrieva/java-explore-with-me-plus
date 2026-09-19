@@ -1,14 +1,7 @@
 package ru.practicum.event.model;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,52 +27,52 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event extends BaseEntity {
 
-	@Column(nullable = false, length = 2000)
-	String annotation;
+    @Column(nullable = false, length = 2000)
+    String annotation;
 
-	@ManyToOne
-	@JoinColumn(name = "category_id", nullable = false)
-	Category category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    Category category;
 
-	@Column(nullable = false)
-	LocalDateTime createdOn;
+    @Column(nullable = false)
+    LocalDateTime createdOn;
 
-	@Column(nullable = false, length = 7000)
-	String description;
+    @Column(nullable = false, length = 7000)
+    String description;
 
-	@Column(nullable = false)
-	LocalDateTime eventDate;
+    @Column(nullable = false)
+    LocalDateTime eventDate;
 
-	@Column(name = "initiator_id", nullable = false)
-	Long initiatorId;
+    @Column(name = "initiator_id", nullable = false)
+    Long initiatorId;
 
-	@Type(JsonBinaryType.class)
-	@JdbcTypeCode(SqlTypes.JSON)
-	@Column(columnDefinition = "jsonb", nullable = false)
-	Location location;
+    @Type(JsonBinaryType.class)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    Location location;
 
-	@Column(nullable = false)
-	boolean paid;
+    @Column(nullable = false)
+    boolean paid;
 
-	@Column(nullable = false)
-	int participantLimit;
+    @Column(nullable = false)
+    int participantLimit;
 
-	LocalDateTime publishedOn;
+    LocalDateTime publishedOn;
 
-	@Column(nullable = false)
-	boolean requestModeration;
+    @Column(nullable = false)
+    boolean requestModeration;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	EventState state;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    EventState state;
 
-	@Column(nullable = false, length = 120)
-	String title;
+    @Column(nullable = false, length = 120)
+    String title;
 
-	@ManyToMany(mappedBy = "events")
-	@lombok.Builder.Default
-	Set<Compilation> compilations = new HashSet<>();
+    @ManyToMany(mappedBy = "events")
+    @lombok.Builder.Default
+    Set<Compilation> compilations = new HashSet<>();
 
-	@Column(nullable = false)
-	long rate;
+    @Column(nullable = false)
+    long rate;
 }

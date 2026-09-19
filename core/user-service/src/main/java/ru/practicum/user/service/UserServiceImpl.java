@@ -20,41 +20,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	@Override
-	public UserDto adminAddNewUser(@NonNull NewUserRequest newUserRequest) {
-		if (userRepository.existsByEmail(newUserRequest.email())) {
-			throw new ConflictException("Пользователь с такой почтой " + newUserRequest.email() + " уже существует");
-		}
-		User user = UserMapper.toEntity(newUserRequest);
-		return UserMapper.toUserDto(userRepository.save(user));
-	}
+    @Override
+    public UserDto adminAddNewUser(@NonNull NewUserRequest newUserRequest) {
+        if (userRepository.existsByEmail(newUserRequest.email())) {
+            throw new ConflictException("Пользователь с такой почтой " + newUserRequest.email() + " уже существует");
+        }
+        User user = UserMapper.toEntity(newUserRequest);
+        return UserMapper.toUserDto(userRepository.save(user));
+    }
 
-	@Override
-	public List<UserDto> getUsers(List<Long> ids, int from, int size) {
-		PageRequest page = PageRequest.of(from / size, size);
-		List<User> users;
-		if (ids == null || ids.isEmpty()) {
-			users = userRepository.findAll(page).getContent();
-		} else {
-			users = userRepository.findAllByIdIn(ids, page);
-		}
-		return users.stream()
-				.map(UserMapper::toUserDto)
-				.collect(Collectors.toList());
-	}
+    @Override
+    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
+        PageRequest page = PageRequest.of(from / size, size);
+        List<User> users;
+        if (ids == null || ids.isEmpty()) {
+            users = userRepository.findAll(page).getContent();
+        } else {
+            users = userRepository.findAllByIdIn(ids, page);
+        }
+        return users.stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	@Transactional
-	public void deleteUser(Long userId) {
-		checkUser(userId);
-		userRepository.deleteById(userId);
-	}
+    @Override
+    @Transactional
+    public void deleteUser(Long userId) {
+        checkUser(userId);
+        userRepository.deleteById(userId);
+    }
 
-	private void checkUser(Long userId) {
-		if (!userRepository.existsById(userId)) {
-			throw new NotFoundException("Пользователь с id=" + userId + " не найден");
-		}
-	}
+    private void checkUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
+        }
+    }
 }

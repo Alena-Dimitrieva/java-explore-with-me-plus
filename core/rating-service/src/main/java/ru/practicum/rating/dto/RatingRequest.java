@@ -14,6 +14,6 @@ import ru.practicum.rating.model.enums.Reaction;
 @AllArgsConstructor
 public class RatingRequest {
 
-	@NotNull
-	private Reaction reaction;
+    @NotNull
+    private Reaction reaction;
 }

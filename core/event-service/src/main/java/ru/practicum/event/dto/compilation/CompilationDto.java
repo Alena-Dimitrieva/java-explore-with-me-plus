@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompilationDto {
-	private Long id;
-	private boolean pinned;
-	private String title;
-	private List<EventShortDto> events;
+    private Long id;
+    private boolean pinned;
+    private String title;
+    private List<EventShortDto> events;
 }

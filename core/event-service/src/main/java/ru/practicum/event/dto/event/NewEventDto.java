@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.event.model.Location;
 
-
 import java.time.LocalDateTime;
 
 @Data
@@ -18,33 +17,33 @@ import java.time.LocalDateTime;
 @FieldDefaults(makeFinal = true)
 public class NewEventDto {
 
-	@NotBlank
-	@Size(min = 20, max = 2000)
-	String annotation;
+    @NotBlank
+    @Size(min = 20, max = 2000)
+    String annotation;
 
-	@NotNull
-	Long category;
+    @NotNull
+    Long category;
 
-	@NotBlank
-	@Size(min = 20, max = 7000)
-	String description;
+    @NotBlank
+    @Size(min = 20, max = 7000)
+    String description;
 
-	@NotNull
-	LocalDateTime eventDate;
+    @NotNull
+    LocalDateTime eventDate;
 
-	@NotNull
-	Location location;
+    @NotNull
+    Location location;
 
-	@Builder.Default
-	Boolean paid = false;
+    @Builder.Default
+    Boolean paid = false;
 
-	@Builder.Default
-	Integer participantLimit = 0;
+    @Builder.Default
+    Integer participantLimit = 0;
 
-	@Builder.Default
-	Boolean requestModeration = true;
+    @Builder.Default
+    Boolean requestModeration = true;
 
-	@NotBlank
-	@Size(min = 3, max = 120)
-	String title;
+    @NotBlank
+    @Size(min = 3, max = 120)
+    String title;
 }

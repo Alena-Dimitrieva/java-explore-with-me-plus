@@ -8,13 +8,13 @@ import lombok.Builder;
 @Builder
 public record NewUserRequest(
 
-		@Size(min = 2, max = 250)
-		@NotBlank
-		String name,
+        @Size(min = 2, max = 250)
+        @NotBlank
+        String name,
 
-		@Email
-		@Size(min = 6, max = 254)
-		@NotBlank
-		String email
+        @Email
+        @Size(min = 6, max = 254)
+        @NotBlank
+        String email
 ) {
 }

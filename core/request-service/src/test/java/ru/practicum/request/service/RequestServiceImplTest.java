@@ -11,14 +11,15 @@ import ru.practicum.request.dao.RequestRepository;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.dto.ParticipationStatus;
 import ru.practicum.request.model.ParticipationRequest;
-import ru.practicum.user.client.UserClient;
 import ru.practicum.request.util.error.exception.ConflictException;
 import ru.practicum.request.util.error.exception.NotFoundException;
+import ru.practicum.user.client.UserClient;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

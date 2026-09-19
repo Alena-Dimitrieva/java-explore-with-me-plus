@@ -13,19 +13,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EndpointHit {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(nullable = false)
-	private String app;
+    @Column(nullable = false)
+    private String app;
 
-	@Column(nullable = false, length = 512)
-	private String uri;
+    @Column(nullable = false, length = 512)
+    private String uri;
 
-	@Column(nullable = false, length = 45)
-	private String ip;
+    @Column(nullable = false, length = 45)
+    private String ip;
 
-	@Column(name = "hit_timestamp", nullable = false)
-	private LocalDateTime timestamp;
+    @Column(name = "hit_timestamp", nullable = false)
+    private LocalDateTime timestamp;
 }

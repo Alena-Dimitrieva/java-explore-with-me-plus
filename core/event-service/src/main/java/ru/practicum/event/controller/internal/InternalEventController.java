@@ -1,14 +1,8 @@
 package ru.practicum.event.controller.internal;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dao.EventRepository;
-
 import ru.practicum.event.dto.EventInternalDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.enums.EventState;

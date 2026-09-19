@@ -13,7 +13,6 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import ru.practicum.rating.util.error.exception.ConflictException;
 import ru.practicum.rating.util.error.exception.NotFoundException;
 
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.dao.UserRepository;
 import ru.practicum.user.dto.UserShortDto;
-import ru.practicum.user.util.error.exception.NotFoundException;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
+import ru.practicum.user.util.error.exception.NotFoundException;
 
 import java.util.List;
 

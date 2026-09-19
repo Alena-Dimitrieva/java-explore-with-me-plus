@@ -14,20 +14,20 @@ import ru.practicum.rating.service.RatingService;
 @RequiredArgsConstructor
 public class RatingController {
 
-	private final RatingService ratingService;
+    private final RatingService ratingService;
 
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public RatingResponse addReaction(@PathVariable Long userId,
-									  @PathVariable Long eventId,
-									  @Valid @RequestBody RatingRequest request) {
-		return ratingService.addOrUpdateReaction(userId, eventId, request);
-	}
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RatingResponse addReaction(@PathVariable Long userId,
+                                      @PathVariable Long eventId,
+                                      @Valid @RequestBody RatingRequest request) {
+        return ratingService.addOrUpdateReaction(userId, eventId, request);
+    }
 
-	@DeleteMapping
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void removeReaction(@PathVariable Long userId,
-	                           @PathVariable Long eventId) {
-		ratingService.removeReaction(userId, eventId);
-	}
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeReaction(@PathVariable Long userId,
+                               @PathVariable Long eventId) {
+        ratingService.removeReaction(userId, eventId);
+    }
 }

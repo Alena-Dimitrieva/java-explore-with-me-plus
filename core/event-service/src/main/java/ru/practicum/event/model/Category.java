@@ -17,6 +17,6 @@ import ru.practicum.event.util.entity.BaseEntity;
 @NoArgsConstructor
 public class Category extends BaseEntity {
 
-	@Column(nullable = false, length = 50, unique = true)
-	private String name;
+    @Column(nullable = false, length = 50, unique = true)
+    private String name;
 }

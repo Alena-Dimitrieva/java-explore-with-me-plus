@@ -15,52 +15,52 @@ import java.util.Set;
 @UtilityClass
 public class CompilationMapper {
 
-	public CompilationDto toCompilationDto(
-			@NonNull Compilation compilation,
-			@NonNull Map<Long, UserShortDto> initiators,
-			@NonNull Map<Long, Long> confirmedRequests,
-			@NonNull Map<Long, Long> views) {
+    public CompilationDto toCompilationDto(
+            @NonNull Compilation compilation,
+            @NonNull Map<Long, UserShortDto> initiators,
+            @NonNull Map<Long, Long> confirmedRequests,
+            @NonNull Map<Long, Long> views) {
 
-		return CompilationDto.builder()
-				.id(compilation.getId())
-				.pinned(compilation.isPinned())
-				.title(compilation.getTitle())
-				.events(
-						compilation.getEvents()
-								.stream()
-								.map(event ->
-										EventMapper.toEventShortDto(
-												event,
-												initiators.get(
-														event.getInitiatorId()
-												),
-												confirmedRequests.getOrDefault(
-														event.getId(),
-														0L
-												),
-												views.getOrDefault(
-														event.getId(),
-														0L
-												)
-										)
-								)
-								.toList()
-				)
-				.build();
-	}
+        return CompilationDto.builder()
+                .id(compilation.getId())
+                .pinned(compilation.isPinned())
+                .title(compilation.getTitle())
+                .events(
+                        compilation.getEvents()
+                                .stream()
+                                .map(event ->
+                                        EventMapper.toEventShortDto(
+                                                event,
+                                                initiators.get(
+                                                        event.getInitiatorId()
+                                                ),
+                                                confirmedRequests.getOrDefault(
+                                                        event.getId(),
+                                                        0L
+                                                ),
+                                                views.getOrDefault(
+                                                        event.getId(),
+                                                        0L
+                                                )
+                                        )
+                                )
+                                .toList()
+                )
+                .build();
+    }
 
-	public Compilation toEntity(
-			@NonNull NewCompilationDto dto,
-			Set<Event> events) {
+    public Compilation toEntity(
+            @NonNull NewCompilationDto dto,
+            Set<Event> events) {
 
-		return Compilation.builder()
-				.title(dto.getTitle())
-				.pinned(dto.isPinned())
-				.events(
-						events == null
-								? new HashSet<>()
-								: events
-				)
-				.build();
-	}
+        return Compilation.builder()
+                .title(dto.getTitle())
+                .pinned(dto.isPinned())
+                .events(
+                        events == null
+                                ? new HashSet<>()
+                                : events
+                )
+                .build();
+    }
 }

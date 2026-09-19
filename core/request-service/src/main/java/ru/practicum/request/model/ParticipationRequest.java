@@ -1,10 +1,6 @@
 package ru.practicum.request.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,16 +21,16 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ParticipationRequest extends BaseEntity {
 
-	@Column(nullable = false)
-	LocalDateTime created;
+    @Column(nullable = false)
+    LocalDateTime created;
 
-	@Column(name = "event_id", nullable = false)
-	Long eventId;
+    @Column(name = "event_id", nullable = false)
+    Long eventId;
 
-	@Column(name = "requester_id", nullable = false)
-	Long requesterId;
+    @Column(name = "requester_id", nullable = false)
+    Long requesterId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	ParticipationStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ParticipationStatus status;
 }

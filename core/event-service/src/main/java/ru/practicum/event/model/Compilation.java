@@ -1,11 +1,6 @@
 package ru.practicum.event.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,18 +21,18 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Compilation extends BaseEntity {
 
-	@Column(nullable = false, length = 50)
-	String title;
+    @Column(nullable = false, length = 50)
+    String title;
 
-	@ManyToMany
-	@JoinTable(
-			name = "compilation_events",
-			joinColumns = @JoinColumn(name = "compilation_id"),
-			inverseJoinColumns = @JoinColumn(name = "event_id")
-	)
-	@lombok.Builder.Default
-	Set<Event> events = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "compilation_events",
+            joinColumns = @JoinColumn(name = "compilation_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    @lombok.Builder.Default
+    Set<Event> events = new HashSet<>();
 
-	@Column(nullable = false)
-	boolean pinned;
+    @Column(nullable = false)
+    boolean pinned;
 }

@@ -15,12 +15,12 @@ import java.util.Set;
 @NoArgsConstructor
 public class NewCompilationDto {
 
-	private Set<Long> events;
+    private Set<Long> events;
 
-	@Builder.Default
-	private boolean pinned = false;
+    @Builder.Default
+    private boolean pinned = false;
 
-	@NotBlank
-	@Size(min = 1, max = 50)
-	private String title;
+    @NotBlank
+    @Size(min = 1, max = 50)
+    private String title;
 }

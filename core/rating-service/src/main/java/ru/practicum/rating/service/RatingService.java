@@ -5,14 +5,14 @@ import ru.practicum.rating.dto.RatingResponse;
 
 public interface RatingService {
 
-	RatingResponse addOrUpdateReaction(
-			Long userId,
-			Long eventId,
-			RatingRequest request
-	);
+    RatingResponse addOrUpdateReaction(
+            Long userId,
+            Long eventId,
+            RatingRequest request
+    );
 
-	void removeReaction(
-			Long userId,
-			Long eventId
-	);
+    void removeReaction(
+            Long userId,
+            Long eventId
+    );
 }

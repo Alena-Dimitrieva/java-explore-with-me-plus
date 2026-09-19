@@ -8,12 +8,12 @@ import java.util.List;
 
 @Builder
 public record AdminGetDto(
-		List<Long> users,
-		List<EventState> states,
-		List<Long> categories,
-		LocalDateTime rangeStart,
-		LocalDateTime rangeEnd,
-		Integer from,
-		Integer size
+        List<Long> users,
+        List<EventState> states,
+        List<Long> categories,
+        LocalDateTime rangeStart,
+        LocalDateTime rangeEnd,
+        Integer from,
+        Integer size
 ) {
 }

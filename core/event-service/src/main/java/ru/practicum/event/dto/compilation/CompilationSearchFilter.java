@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompilationSearchFilter {
 
-	Boolean pinned;
+    Boolean pinned;
 
-	@Builder.Default
-	Integer from = 0;
+    @Builder.Default
+    Integer from = 0;
 
-	@Builder.Default
-	Integer size = 10;
+    @Builder.Default
+    Integer size = 10;
 }

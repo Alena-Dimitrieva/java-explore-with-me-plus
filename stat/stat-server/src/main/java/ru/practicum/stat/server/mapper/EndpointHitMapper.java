@@ -6,12 +6,12 @@ import ru.practicum.stat.server.model.EndpointHit;
 
 public class EndpointHitMapper {
 
-	public static EndpointHit toEntity(@NonNull EndpointHitDto dto) {
-		return EndpointHit.builder()
-				.app(dto.getApp())
-				.uri(dto.getUri())
-				.ip(dto.getIp())
-				.timestamp(dto.getTimestamp())
-				.build();
-	}
+    public static EndpointHit toEntity(@NonNull EndpointHitDto dto) {
+        return EndpointHit.builder()
+                .app(dto.getApp())
+                .uri(dto.getUri())
+                .ip(dto.getIp())
+                .timestamp(dto.getTimestamp())
+                .build();
+    }
 }

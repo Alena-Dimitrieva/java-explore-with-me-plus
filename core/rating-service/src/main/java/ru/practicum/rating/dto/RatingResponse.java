@@ -12,8 +12,8 @@ import ru.practicum.rating.model.enums.Reaction;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingResponse {
-	private Long id;
-	private Long userId;
-	private Long eventId;
-	private Reaction reaction;
+    private Long id;
+    private Long userId;
+    private Long eventId;
+    private Reaction reaction;
 }

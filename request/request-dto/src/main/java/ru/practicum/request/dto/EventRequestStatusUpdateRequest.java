@@ -7,9 +7,9 @@ import java.util.List;
 
 @Builder
 public record EventRequestStatusUpdateRequest(
-		List<Long> requestIds,
+        List<Long> requestIds,
 
-		@NotNull
-		RequestUpdateStatus status
+        @NotNull
+        RequestUpdateStatus status
 ) {
 }

@@ -6,25 +6,26 @@ import ru.practicum.stat.server.model.EndpointHit;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class EndpointHitMapperTest {
 
-	@Test
-	void toEntity_shouldMapAllFieldsCorrectly() {
-		LocalDateTime now = LocalDateTime.now();
-		EndpointHitDto dto = EndpointHitDto.builder()
-				.app("ewm-main-service")
-				.uri("/events/1")
-				.ip("192.168.1.1")
-				.timestamp(now)
-				.build();
-		EndpointHit entity = EndpointHitMapper.toEntity(dto);
+    @Test
+    void toEntity_shouldMapAllFieldsCorrectly() {
+        LocalDateTime now = LocalDateTime.now();
+        EndpointHitDto dto = EndpointHitDto.builder()
+                .app("ewm-main-service")
+                .uri("/events/1")
+                .ip("192.168.1.1")
+                .timestamp(now)
+                .build();
+        EndpointHit entity = EndpointHitMapper.toEntity(dto);
 
-		assertNotNull(entity);
-		assertEquals(dto.getApp(), entity.getApp());
-		assertEquals(dto.getUri(), entity.getUri());
-		assertEquals(dto.getIp(), entity.getIp());
-		assertEquals(dto.getTimestamp(), entity.getTimestamp());
-	}
+        assertNotNull(entity);
+        assertEquals(dto.getApp(), entity.getApp());
+        assertEquals(dto.getUri(), entity.getUri());
+        assertEquals(dto.getIp(), entity.getIp());
+        assertEquals(dto.getTimestamp(), entity.getTimestamp());
+    }
 }

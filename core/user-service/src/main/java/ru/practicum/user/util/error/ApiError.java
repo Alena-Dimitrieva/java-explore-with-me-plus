@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
  * @param timestamp Дата и время когда произошла ошибка (в формате "yyyy-MM-dd HH:mm:ss")
  */
 public record ApiError(
-		HttpStatus status,
-		String reason,
-		String message,
-		String errors,
-		LocalDateTime timestamp
+        HttpStatus status,
+        String reason,
+        String message,
+        String errors,
+        LocalDateTime timestamp
 ) {
 }
 

@@ -19,21 +19,21 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class StatService {
 
-	private final StatRepository statRepository;
+    private final StatRepository statRepository;
 
-	@Transactional
-	public void saveHit(@NonNull EndpointHitDto endpointHitDto) {
-		log.debug("Сохранение записи о просмотре для URI: {}", endpointHitDto.getUri());
-		statRepository.save(EndpointHitMapper.toEntity(endpointHitDto));
-	}
+    @Transactional
+    public void saveHit(@NonNull EndpointHitDto endpointHitDto) {
+        log.debug("Сохранение записи о просмотре для URI: {}", endpointHitDto.getUri());
+        statRepository.save(EndpointHitMapper.toEntity(endpointHitDto));
+    }
 
-	public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-		if (unique) {
-			log.debug("Получение статистики (уникальные IP) для URI: {}", uris);
-			return statRepository.getStatsUnique(start, end, uris);
-		}
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (unique) {
+            log.debug("Получение статистики (уникальные IP) для URI: {}", uris);
+            return statRepository.getStatsUnique(start, end, uris);
+        }
 
-		log.debug("Получение общей статистики для URI: {}", uris);
-		return statRepository.getStats(start, end, uris);
-	}
+        log.debug("Получение общей статистики для URI: {}", uris);
+        return statRepository.getStats(start, end, uris);
+    }
 }

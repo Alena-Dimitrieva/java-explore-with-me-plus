@@ -10,14 +10,14 @@ import lombok.Builder;
 @Builder
 public record UserShortDto(
 
-		Long id,
+        Long id,
 
-		@NotBlank
-		String name,
+        @NotBlank
+        String name,
 
-		@Email
-		@Size(min = 6, max = 255)
-		@NotBlank
-		String email
+        @Email
+        @Size(min = 6, max = 255)
+        @NotBlank
+        String email
 ) {
 }

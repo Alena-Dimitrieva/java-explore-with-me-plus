@@ -3,7 +3,7 @@ package ru.practicum.request.service;
 
 public interface EventRequestCount {
 
-	Long getEventId();
+    Long getEventId();
 
-	Long getCount();
+    Long getCount();
 }

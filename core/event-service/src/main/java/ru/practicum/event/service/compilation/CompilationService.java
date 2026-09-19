@@ -6,18 +6,17 @@ import ru.practicum.event.dto.compilation.CompilationSearchFilter;
 import ru.practicum.event.dto.compilation.CompilationUpdateDto;
 import ru.practicum.event.dto.compilation.NewCompilationDto;
 
-
 import java.util.List;
 
 public interface CompilationService {
 
-	CompilationDto getById(Long compilationId, HttpServletRequest request);
+    CompilationDto getById(Long compilationId, HttpServletRequest request);
 
-	void delById(Long compilationId);
+    void delById(Long compilationId);
 
-	CompilationDto addCompilation(NewCompilationDto compilation);
+    CompilationDto addCompilation(NewCompilationDto compilation);
 
-	CompilationDto updateCompilation(Long compilationId, CompilationUpdateDto compilation);
+    CompilationDto updateCompilation(Long compilationId, CompilationUpdateDto compilation);
 
-	List<CompilationDto> getByFilter(CompilationSearchFilter filter, HttpServletRequest request);
+    List<CompilationDto> getByFilter(CompilationSearchFilter filter, HttpServletRequest request);
 }

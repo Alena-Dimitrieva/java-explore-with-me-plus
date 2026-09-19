@@ -1,11 +1,6 @@
 package ru.practicum.rating.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,35 +14,35 @@ import ru.practicum.rating.util.entity.BaseEntity;
 @Getter
 @Setter
 @Table(
-		name = "ratings",
-		uniqueConstraints = @UniqueConstraint(
-				columnNames = {
-						"user_id",
-						"event_id"
-				}
-		)
+        name = "ratings",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {
+                        "user_id",
+                        "event_id"
+                }
+        )
 )
 @SuperBuilder
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Rating extends BaseEntity {
 
-	@Column(
-			name = "user_id",
-			nullable = false
-	)
-	Long userId;
+    @Column(
+            name = "user_id",
+            nullable = false
+    )
+    Long userId;
 
-	@Column(
-			name = "event_id",
-			nullable = false
-	)
-	Long eventId;
+    @Column(
+            name = "event_id",
+            nullable = false
+    )
+    Long eventId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(
-			nullable = false,
-			length = 10
-	)
-	Reaction reaction;
+    @Enumerated(EnumType.STRING)
+    @Column(
+            nullable = false,
+            length = 10
+    )
+    Reaction reaction;
 }

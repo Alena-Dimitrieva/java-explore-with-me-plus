@@ -5,33 +5,32 @@ import lombok.Builder;
 import ru.practicum.event.model.Location;
 import ru.practicum.event.model.enums.AdminStateAction;
 
-
 import java.time.LocalDateTime;
 
 @Builder
 public record UpdateEventAdminRequest(
 
-		@Size(min = 20, max = 2000)
-		String annotation,
+        @Size(min = 20, max = 2000)
+        String annotation,
 
-		Long category,
+        Long category,
 
-		@Size(min = 20, max = 7000)
-		String description,
+        @Size(min = 20, max = 7000)
+        String description,
 
-		LocalDateTime eventDate,
+        LocalDateTime eventDate,
 
-		Location location,
+        Location location,
 
-		Boolean paid,
+        Boolean paid,
 
-		Integer participantLimit,
+        Integer participantLimit,
 
-		Boolean requestModeration,
+        Boolean requestModeration,
 
-		AdminStateAction stateAction,
+        AdminStateAction stateAction,
 
-		@Size(min = 3, max = 120)
-		String title
+        @Size(min = 3, max = 120)
+        String title
 ) {
 }

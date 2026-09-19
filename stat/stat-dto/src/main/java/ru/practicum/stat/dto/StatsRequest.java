@@ -14,14 +14,14 @@ import java.util.List;
 @NoArgsConstructor
 public class StatsRequest {
 
-	@NotNull
-	private String start;
+    @NotNull
+    private String start;
 
-	@NotNull
-	private String end;
+    @NotNull
+    private String end;
 
-	private List<String> uris;
+    private List<String> uris;
 
-	@Builder.Default
-	private Boolean unique = false;
+    @Builder.Default
+    private Boolean unique = false;
 }

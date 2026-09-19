@@ -6,11 +6,9 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import ru.practicum.event.dto.event.EventFullDto;
 import ru.practicum.event.dto.event.EventShortDto;
 import ru.practicum.event.dto.event.NewEventDto;
-
 import ru.practicum.event.dto.event.UpdateEventUserRequest;
 import ru.practicum.event.service.event.EventService;
 

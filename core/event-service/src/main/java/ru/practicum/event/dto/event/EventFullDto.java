@@ -8,50 +8,49 @@ import ru.practicum.event.model.Location;
 import ru.practicum.event.model.enums.EventState;
 import ru.practicum.user.dto.UserShortDto;
 
-
 import java.time.LocalDateTime;
 
 @Builder
 public record EventFullDto(
 
-		Long id,
+        Long id,
 
-		@NotBlank
-		String annotation,
+        @NotBlank
+        String annotation,
 
-		@NotNull
-		CategoryDto category,
+        @NotNull
+        CategoryDto category,
 
-		Long confirmedRequests,
+        Long confirmedRequests,
 
-		LocalDateTime createdOn,
+        LocalDateTime createdOn,
 
-		String description,
+        String description,
 
-		@NotNull
-		LocalDateTime eventDate,
+        @NotNull
+        LocalDateTime eventDate,
 
-		@NotNull
-		UserShortDto initiator,
+        @NotNull
+        UserShortDto initiator,
 
-		@NotNull
-		Location location,
+        @NotNull
+        Location location,
 
-		boolean paid,
+        boolean paid,
 
-		Integer participantLimit,
+        Integer participantLimit,
 
-		LocalDateTime publishedOn,
+        LocalDateTime publishedOn,
 
-		boolean requestModeration,
+        boolean requestModeration,
 
-		EventState state,
+        EventState state,
 
-		@NotBlank
-		String title,
+        @NotBlank
+        String title,
 
-		Long views,
+        Long views,
 
-		long rate
+        long rate
 ) {
 }
