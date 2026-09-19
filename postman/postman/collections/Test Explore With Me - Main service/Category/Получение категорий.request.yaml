@@ -1,0 +1,108 @@
+$kind: http-request
+url: "{{baseUrl}}/categories?from=0&size=1000"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: from
+    value: "0"
+    description: количество категорий, которые нужно пропустить для формирования текущего набора
+  - key: size
+    value: "1000"
+    description: количество категорий в наборе
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        pm.collectionVariables.set(\"response\", category)\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = pm.collectionVariables.get('response');\r
+
+      const target = pm.response.json();\r
+
+      let founded;\r
+
+      target.forEach(function(element){if (element.id == source.id) founded = element});\r
+
+      \r
+
+      pm.test(\"Категория должна содержать поля: id, name\", function () {\r
+
+      pm.expect(target[0]).to.have.property('id');\r
+
+      pm.expect(target[0]).to.have.property('name');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(source.id).equal(founded.id, 'Идентификатор категории должен соответствовать идентификатору категории добавленной ранее');\r
+
+      \    pm.expect(source.name).equal(founded.name, 'Название категории должно соответствовать названию категории добавленной ранее');\r
+
+      });"
+    language: text/javascript
+order: 2000

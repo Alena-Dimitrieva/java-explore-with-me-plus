@@ -1,0 +1,117 @@
+$kind: http-request
+url: "{{baseUrl}}/admin/users"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: "{{request_body}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    let user;\r
+
+      \    try {\r
+
+      \        user = rnd.getUser();\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      \r
+
+      \    pm.request.body.update({\r
+
+      \        mode: 'raw',\r
+
+      \        raw: JSON.stringify(user),\r
+
+      \        options: { raw: { language: 'json' } }\r
+
+      \    });\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = JSON.parse(pm.request.body.raw);\r
+
+      const target = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Пользователь должен содержать поля: id, name, email\", function () {\r
+
+      pm.expect(target).to.have.property('id');\r
+
+      pm.expect(target).to.have.property('name');\r
+
+      pm.expect(target).to.have.property('email');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(target.id).to.not.be.null;\r
+
+      \    pm.expect(source.name).equal(target.name, 'Имя пользователя должно соответствовать отправленному в запросе');\r
+
+      \    pm.expect(source.email).equal(target.email, 'Почта пользователя должна соответствовать отправленной в запросе');\r
+
+      });"
+    language: text/javascript
+order: 2000

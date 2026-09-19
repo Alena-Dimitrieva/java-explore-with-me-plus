@@ -1,0 +1,175 @@
+$kind: http-request
+name: Отклонение запроса на участие в событии
+description: |-
+  Обратите внимание:
+  - если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
+  - нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
+  - статус можно изменить только у заявок, находящихся в состоянии ожидания
+  - если при подтверждении данной заявки, лимит заявок для события исчерпан, то все неподтверждённые заявки необходимо отклонить
+url: "{{baseUrl}}/users/:userId/events/:eventId/requests"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: userId
+    value: "{{uid}}"
+    description: (Required) id текущего пользователя
+  - key: eventId
+    value: "{{eid}}"
+    description: (Required) id события текущего пользователя
+body:
+  type: json
+  content: |-
+    {
+      "requestIds": [
+        1,
+        2,
+        3
+      ],
+      "status": "CONFIRMED"
+    }
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        let eventBody = rnd.getEvent(category.id);\r
+
+      \        eventBody['requestModeration'] = true\r
+
+      \        let event = await api.addEvent(user.id, eventBody);\r
+
+      \        event = await api.publishEvent(event.id);\r
+
+      \        const submittedUser = await api.addUser(rnd.getUser());\r
+
+      \        const requestToJoin = await api.publishParticipationRequest(event.id, submittedUser.id);\r
+
+      \        pm.collectionVariables.set('response', requestToJoin);\r
+
+      \        pm.collectionVariables.set('uid', user.id);\r
+
+      \        pm.collectionVariables.set('eid', event.id);\r
+
+      \        pm.request.body.update({\r
+
+      \            mode: 'raw',\r
+
+      \            raw: JSON.stringify({requestIds: [requestToJoin.id],\r
+
+      \            status:\"REJECTED\"}),\r
+
+      \            options: { raw: { language: 'json' } }\r
+
+      \        });\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            // выполняем наш скрипт\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = pm.collectionVariables.get('response');\r
+
+      const target = pm.response.json()[\"rejectedRequests\"][0];\r
+
+      \r
+
+      pm.test(\"Запрос на участие должен содержать поля: id, requester, event, status, created\", function () {\r
+
+      pm.expect(target).to.have.property('id');\r
+
+      pm.expect(target).to.have.property('requester');\r
+
+      pm.expect(target).to.have.property('event');\r
+
+      pm.expect(target).to.have.property('status');\r
+
+      pm.expect(target).to.have.property('created');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(source.id).equal(target.id, 'Идентификатор запроса на участие в событии должен соответствовать идентификатору запроса на участие в событии указанного пользователя');\r
+
+      \    pm.expect(source.requester).equal(target.requester, 'Пользователь, запрашивающий доступ на участие в событии должен пользователю, отправившему запрос на участие в событии указанного пользователя ранее');\r
+
+      \    pm.expect(source.event).equal(target.event, 'Событие, запрос на участие в котором надо подтвердить, должно соответствовать событию указанного пользователя');\r
+
+      \    pm.expect(source.created).equal(target.created, 'Время создания запроса на участие в событии после подтверждения должно соответствовать времени создания запроса на участие в событии указанного пользователя до подтверждения');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Запрос на участие должен иметь статус PENDING при создании и статус REJECTED после выполнения запроса\", function () {\r
+
+      \    pm.expect(source.status).equal(\"PENDING\");\r
+
+      \    pm.expect(target.status).equal(\"REJECTED\");\r
+
+      });"
+    language: text/javascript
+order: 13000

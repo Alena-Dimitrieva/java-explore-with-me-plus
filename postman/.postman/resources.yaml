@@ -1,0 +1,15 @@
+# Use this workspace to collaborate
+workspace:
+  id: 1d0c2c65-905a-4515-8304-fc258eb03510
+
+localResources:
+  collections:
+    - ../ewm-main-service.json
+    - ../feature.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/feature_rating_events: c535ae47-e148-4d9f-9718-54efe4d01b31
+    ../postman/collections/Test Explore With Me - Main service: c1151725-9d1c-415c-b8bb-3260e2785750

@@ -1,0 +1,89 @@
+$kind: http-request
+name: Попытка получения информации о событии по публичному эндпоинту без публикации
+description: |-
+  Обратите внимание:
+  - событие должно быть опубликовано
+  - информация о событии должна включать в себя количество просмотров и количество подтвержденных запросов
+  - информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
+url: "{{baseUrl}}/events/:id"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: "{{eid}}"
+    description: (Required) id события
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r
+
+      \        pm.collectionVariables.set(\"eid\", event.id)\r
+
+      \        pm.collectionVariables.set('response', event);\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            // выполняем наш скрипт\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.notFound;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r\n"
+    language: text/javascript
+order: 2000

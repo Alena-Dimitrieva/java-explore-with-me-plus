@@ -1,0 +1,101 @@
+$kind: http-request
+name: Добавление нового события с annotation.length > 2000
+description: "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+url: "{{baseUrl}}/users/:userId/events"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+pathVariables:
+  - key: userId
+    value: "{{uid}}"
+    description: (Required) id текущего пользователя
+body:
+  type: json
+  content: "{{request_body}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    let event;\r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        pm.collectionVariables.set(\"uid\", user.id)\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        event = rnd.getEvent(category.id);\r
+
+      \        event.annotation = rnd.getWord(2001);\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      \r
+
+      \    pm.request.body.update({\r
+
+      \        mode: 'raw',\r
+
+      \        raw: JSON.stringify(event),\r
+
+      \        options: { raw: { language: 'json' } }\r
+
+      \    });\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.badRequest;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r\n"
+    language: text/javascript
+order: 4000

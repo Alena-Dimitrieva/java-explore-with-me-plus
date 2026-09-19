@@ -1,0 +1,112 @@
+$kind: http-request
+name: Поиск событий без нескольких Query params
+description: Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
+url: "{{baseUrl}}/admin/events"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: users
+    value: "0"
+    disabled: true
+    description: список id пользователей, чьи события нужно найти
+  - key: states
+    value: PUBLISHED
+    disabled: true
+    description: список состояний в которых находятся искомые события
+  - key: categories
+    value: "0"
+    disabled: true
+    description: список id категорий в которых будет вестись поиск
+  - key: rangeStart
+    value: 2022-01-06%2013%3A30%3A38
+    disabled: true
+    description: дата и время не раньше которых должно произойти событие
+  - key: rangeEnd
+    value: 2097-09-06%2013%3A30%3A38
+    disabled: true
+    description: дата и время не позже которых должно произойти событие
+  - key: from
+    value: "0"
+    disabled: true
+    description: количество событий, которые нужно пропустить для формирования текущего набора
+  - key: size
+    value: "1000"
+    disabled: true
+    description: количество событий в наборе
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \r
+
+      \    try {\r
+
+      \        const user = await api.addUser(rnd.getUser());\r
+
+      \        const category = await api.addCategory(rnd.getCategory());\r
+
+      \        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r
+
+      \        event = await api.publishEvent(event.id);\r
+
+      \        pm.request.removeQueryParams(['users', 'categories']);\r
+
+      \        pm.request.addQueryParams([`users=` + user.id, 'categories=' + category.id]);\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            // выполняем наш скрипт\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });"
+    language: text/javascript
+order: 3000

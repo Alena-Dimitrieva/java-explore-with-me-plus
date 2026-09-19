@@ -1,0 +1,113 @@
+$kind: http-request
+name: Изменение категории с неизменными данными
+url: "{{baseUrl}}/admin/categories/:catId"
+method: PATCH
+pathVariables:
+  catId: "{{catid}}"
+body:
+  type: text
+  content: "{{request_body}}"
+scripts:
+  - type: beforeRequest
+    code: "const main = async () => {\r
+
+      \    const api = new API(pm);\r
+
+      \    const rnd = new RandomUtils();\r
+
+      \    let category, categoryObj\r
+
+      \    try {\r
+
+      \        category = rnd.getCategory();\r
+
+      \        categoryObj = await api.addCategory(category);\r
+
+      \    } catch(err) {\r
+
+      \        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r
+
+      \    }\r
+
+      \    pm.collectionVariables.set(\"catid\", Number(categoryObj.id))\r
+
+      \    pm.request.body.update({\r
+
+      \        mode: 'raw',\r
+
+      \        raw: JSON.stringify(category),\r
+
+      \        options: { raw: { language: 'json' } }\r
+
+      \    });\r
+
+      };\r
+
+      \r
+
+      const interval = setInterval(() => {}, 1000);\r
+
+      \r
+
+      setTimeout(async () => \r
+
+      \    {\r
+
+      \        try {\r
+
+      \            await main();\r
+
+      \        } catch (e) {\r
+
+      \            console.error(e);\r
+
+      \        } finally {\r
+
+      \            clearInterval(interval);\r
+
+      \        }\r
+
+      \    },  \r
+
+      \    100 \r
+
+      );"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r
+
+      \    pm.response.to.be.ok;    \r
+
+      \    pm.response.to.be.withBody;\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      const source = JSON.parse(pm.request.body.raw);\r
+
+      const target = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Категория должна содержать поля: id, name\", function () {\r
+
+      pm.expect(target).to.have.property('id');\r
+
+      pm.expect(target).to.have.property('name');\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r
+
+      \    pm.expect(target.id).to.not.be.null;\r
+
+      \    pm.expect(source.name).equal(target.name, 'Название категории должно совпадать с отправленным');\r
+
+      });"
+    language: text/javascript
+order: 1000
