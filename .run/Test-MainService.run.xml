@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test-MainService" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="test" />
+    <module name="main-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ru.practicum.ewm.MainServiceApp" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

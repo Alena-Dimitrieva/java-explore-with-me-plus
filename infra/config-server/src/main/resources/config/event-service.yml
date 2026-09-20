@@ -1,0 +1,92 @@
+app.name: ewm-event-service
+
+spring:
+  sql.init:
+    mode: ALWAYS
+    schema-locations: classpath:schema-postgres.sql
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6543/ewm-event
+    username: dbuser
+    password: 12345
+
+  jpa:
+    generate-ddl: false
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # чтобы PATCH-запросы работали,
+  # чтобы висящий сервис не блокировал event-service
+  cloud:
+    openfeign:
+      httpclient:
+        hc5:
+          enabled: true
+      client:
+        config:
+          default:
+            connect-timeout: 3000
+            read-timeout: 5000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, refresh
+
+# Resilience4j: circuit breaker + retry для Feign-вызовов
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+    instances:
+      user-service:
+        base-config: default
+      request-service:
+        base-config: default
+      stat-server:
+        base-config: default
+
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - feign.RetryableException
+    instances:
+      user-service:
+        base-config: default
+      request-service:
+        base-config: default
+      stat-server:
+        base-config: default
+
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 3s
+
+logging:
+  level:
+    root: info
+    org.springframework.cloud.openfeign: DEBUG
+    org.springframework.cloud.loadbalancer: INFO

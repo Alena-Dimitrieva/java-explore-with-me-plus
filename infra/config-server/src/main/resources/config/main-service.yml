@@ -1,0 +1,13 @@
+app:
+  name: ewm-main-service
+
+spring:
+  main:
+    banner-mode: OFF
+
+logging:
+  level:
+    root: info
+    org:
+      zalando:
+        logbook: trace
