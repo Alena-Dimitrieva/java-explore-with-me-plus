@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import ru.practicum.event.util.error.exception.BadRequestException;
 import ru.practicum.event.util.error.exception.ConflictException;
 import ru.practicum.event.util.error.exception.NotFoundException;
 
@@ -41,12 +43,37 @@ public class EventServiceErrorHandler {
     @ResponseStatus(BAD_REQUEST)
     public ApiError handleMissingServletRequestParameter(@NonNull final MissingServletRequestParameterException ex) {
         log.warn("400 Bad Request (MissingServletRequestParameter): {}", ex.getMessage());
-        String stackTrace = getStackTrace(ex);
         return new ApiError(
                 BAD_REQUEST,
                 "MissingServletRequestParameter",
                 ex.getMessage(),
-                stackTrace,
+                getStackTrace(ex),
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ApiError handleMissingRequestHeader(@NonNull final MissingRequestHeaderException ex) {
+        log.warn("400 Bad Request (MissingRequestHeader): {}", ex.getMessage());
+        return new ApiError(
+                BAD_REQUEST,
+                "MissingRequestHeader",
+                ex.getMessage(),
+                getStackTrace(ex),
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ApiError handleBadRequest(@NonNull final BadRequestException ex) {
+        log.warn("400 Bad Request: {}", ex.getMessage());
+        return new ApiError(
+                BAD_REQUEST,
+                "Incorrectly made request.",
+                ex.getMessage(),
+                getStackTrace(ex),
                 LocalDateTime.now()
         );
     }
@@ -131,9 +158,9 @@ public class EventServiceErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(CONFLICT)
+    @ResponseStatus(BAD_REQUEST)
     public ApiError handleHttpMessageNotReadableException(@NonNull final HttpMessageNotReadableException ex) {
-        log.warn("409 CONFLICT: Required request body is missing or invalid");
+        log.warn("400 BAD_REQUEST: Required request body is missing or invalid");
         return new ApiError(
                 BAD_REQUEST,
                 "Incorrectly made request.",

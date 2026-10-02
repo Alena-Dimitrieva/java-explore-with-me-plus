@@ -20,6 +20,6 @@ public record FreeGetDto(
 
     public enum FreeEventSort {
         EVENT_DATE,
-        VIEWS
+        RATING
     }
 }

@@ -12,7 +12,7 @@ import ru.practicum.event.dto.compilation.CompilationDto;
 import ru.practicum.event.dto.compilation.NewCompilationDto;
 import ru.practicum.event.model.Compilation;
 import ru.practicum.event.util.error.exception.NotFoundException;
-import ru.practicum.event.util.statistic.StatRepository;
+import ru.practicum.stat.client.AnalyzerClient;
 import ru.practicum.request.client.RequestClient;
 import ru.practicum.user.client.UserClient;
 
@@ -32,7 +32,7 @@ class CompilationServiceImplTest {
     private EventRepository eventRepository;
 
     @Mock
-    private StatRepository statRepository;
+    private AnalyzerClient analyzerClient;
 
     @Mock
     private RequestClient requestClient;

@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.event.client.EventClient;
+import ru.practicum.ewm.stats.proto.collector.ActionTypeProto;
+import ru.practicum.stat.client.CollectorClient;
 import ru.practicum.event.dto.EventInternalDto;
 import ru.practicum.request.dao.RequestRepository;
 import ru.practicum.request.dto.ParticipationRequestDto;
@@ -15,6 +17,7 @@ import ru.practicum.request.util.error.exception.ConflictException;
 import ru.practicum.request.util.error.exception.NotFoundException;
 import ru.practicum.user.client.UserClient;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -34,6 +37,9 @@ class RequestServiceImplTest {
 
     @Mock
     private EventClient eventClient;
+
+    @Mock
+    private CollectorClient collectorClient;
 
     @InjectMocks
     private RequestServiceImpl service;
@@ -66,6 +72,12 @@ class RequestServiceImplTest {
         assertEquals(200L, result.requester());
         assertEquals(10L, result.event());
         assertEquals(ParticipationStatus.CONFIRMED, result.status());
+        verify(collectorClient).collectUserAction(
+                eq(200L),
+                eq(10L),
+                eq(ActionTypeProto.ACTION_REGISTER),
+                any(Instant.class)
+        );
     }
 
     @Test
@@ -99,6 +111,12 @@ class RequestServiceImplTest {
                 service.addParticipationRequest(200L, 10L);
 
         assertEquals(ParticipationStatus.PENDING, result.status());
+        verify(collectorClient).collectUserAction(
+                eq(200L),
+                eq(10L),
+                eq(ActionTypeProto.ACTION_REGISTER),
+                any(Instant.class)
+        );
     }
 
     @Test

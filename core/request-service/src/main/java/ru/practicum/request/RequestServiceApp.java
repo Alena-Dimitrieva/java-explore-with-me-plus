@@ -9,7 +9,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
         "ru.practicum.request.client",
         "ru.practicum.event.client"
 })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+        "ru.practicum.request",
+        "ru.practicum.user",
+        "ru.practicum.event",
+        "ru.practicum.stat"
+})
 public class RequestServiceApp {
 
     public static void main(String[] args) {
