@@ -49,8 +49,6 @@ public record EventFullDto(
         @NotBlank
         String title,
 
-        Long views,
-
-        long rate
+        double rating
 ) {
 }

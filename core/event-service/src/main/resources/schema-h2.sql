@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS events (
     title VARCHAR(120) NOT NULL,
     category_id BIGINT NOT NULL,
     initiator_id BIGINT NOT NULL,
-    rate BIGINT NOT NULL DEFAULT 0,
+    rating DOUBLE NOT NULL DEFAULT 0,
     CONSTRAINT fk_events_categories FOREIGN KEY (category_id) REFERENCES categories(id),
     CONSTRAINT chk_events_state CHECK (state IN ('PENDING','PUBLISHED','CANCELED'))
 );

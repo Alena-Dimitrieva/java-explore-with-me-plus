@@ -20,12 +20,11 @@ import ru.practicum.event.mapper.CompilationMapper;
 import ru.practicum.event.model.Compilation;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.util.error.exception.NotFoundException;
-import ru.practicum.event.util.statistic.StatRepository;
 import ru.practicum.request.client.RequestClient;
 import ru.practicum.request.dto.EventRequestCountDto;
-import ru.practicum.stat.dto.ViewStatsDto;
 import ru.practicum.user.client.UserClient;
 import ru.practicum.user.dto.UserShortDto;
+import ru.practicum.stat.client.AnalyzerClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ public class CompilationServiceImpl
 
     CompilationRepository compilationRepository;
     EventRepository eventRepository;
-    StatRepository statRepository;
+    AnalyzerClient analyzerClient;
     RequestClient requestClient;
     UserClient userClient;
 
@@ -50,8 +49,6 @@ public class CompilationServiceImpl
     public CompilationDto getById(
             Long compilationId,
             HttpServletRequest request) {
-
-        statRepository.sendHitRequest(request);
 
         Compilation compilation =
                 getCompilationById(compilationId);
@@ -64,7 +61,7 @@ public class CompilationServiceImpl
                 getConfirmedRequests(
                         List.of(compilation)
                 ),
-                getViews(
+                getRatings(
                         List.of(compilation)
                 )
         );
@@ -118,24 +115,11 @@ public class CompilationServiceImpl
         Compilation savedCompilation =
                 compilationRepository.save(compilation);
 
-        Map<Long, Long> confirmedRequests =
-                new HashMap<>();
+        Map<Long, Long> confirmedRequests = new HashMap<>();
+        savedCompilation.getEvents().forEach(event ->
+                confirmedRequests.put(event.getId(), 0L));
 
-        Map<Long, Long> views =
-                new HashMap<>();
-
-        savedCompilation.getEvents()
-                .forEach(event -> {
-                    confirmedRequests.put(
-                            event.getId(),
-                            0L
-                    );
-
-                    views.put(
-                            event.getId(),
-                            0L
-                    );
-                });
+        Map<Long, Double> ratings = getRatings(List.of(savedCompilation));
 
         return CompilationMapper.toCompilationDto(
                 savedCompilation,
@@ -143,7 +127,7 @@ public class CompilationServiceImpl
                         List.of(savedCompilation)
                 ),
                 confirmedRequests,
-                views
+                ratings
         );
     }
 
@@ -204,7 +188,7 @@ public class CompilationServiceImpl
                 getConfirmedRequests(
                         List.of(compilation)
                 ),
-                getViews(
+                getRatings(
                         List.of(compilation)
                 )
         );
@@ -249,8 +233,8 @@ public class CompilationServiceImpl
         Map<Long, Long> confirmedRequests =
                 getConfirmedRequests(compilations);
 
-        Map<Long, Long> views =
-                getViews(compilations);
+        Map<Long, Double> ratings =
+                getRatings(compilations);
 
         return compilations.stream()
                 .map(compilation ->
@@ -258,7 +242,7 @@ public class CompilationServiceImpl
                                 compilation,
                                 initiators,
                                 confirmedRequests,
-                                views
+                                ratings
                         )
                 )
                 .toList();
@@ -343,50 +327,22 @@ public class CompilationServiceImpl
                 );
     }
 
-    private Map<Long, Long> getViews(
+    private Map<Long, Double> getRatings(
             Collection<Compilation> compilations) {
 
-        List<Long> eventIds =
-                compilations.stream()
-                        .flatMap(
-                                compilation ->
-                                        compilation
-                                                .getEvents()
-                                                .stream()
-                        )
-                        .map(Event::getId)
-                        .distinct()
-                        .toList();
+        List<Long> eventIds = compilations.stream()
+                .flatMap(compilation -> compilation.getEvents().stream())
+                .map(Event::getId)
+                .distinct()
+                .toList();
 
         if (eventIds.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        List<String> uris =
-                eventIds.stream()
-                        .map(id -> "/events/" + id)
-                        .toList();
-
-        List<ViewStatsDto> stats =
-                statRepository.getStat(
-                        uris,
-                        false
-                );
-
-        return stats.stream()
-                .collect(
-                        Collectors.toMap(
-                                stat ->
-                                        Long.parseLong(
-                                                stat.getUri()
-                                                        .replace(
-                                                                "/events/",
-                                                                ""
-                                                        )
-                                        ),
-                                ViewStatsDto::getHits,
-                                (first, second) -> first
-                        )
-                );
+        Map<Long, Double> ratings = new HashMap<>();
+        analyzerClient.getInteractionsCount(eventIds)
+                .forEach(item -> ratings.put(item.getEventId(), item.getScore()));
+        return ratings;
     }
 }

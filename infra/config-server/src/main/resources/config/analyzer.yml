@@ -1,0 +1,36 @@
+grpc:
+  server:
+    port: 0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6542/ewm-stats
+    username: dbuser
+    password: 12345
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://localhost:8081
+        specific.avro.reader: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+analyzer:
+  recommendations:
+    neighbors: 5

@@ -74,5 +74,5 @@ public class Event extends BaseEntity {
     Set<Compilation> compilations = new HashSet<>();
 
     @Column(nullable = false)
-    long rate;
+    double rating;
 }

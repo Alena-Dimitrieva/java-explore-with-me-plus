@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.events (
     title varchar(120) NOT NULL,
     category_id bigint NOT NULL,
     initiator_id bigint NOT NULL,
-    rate bigint NOT NULL DEFAULT 0,
+    rating double precision NOT NULL DEFAULT 0,
     CONSTRAINT pk_events PRIMARY KEY (id),
     CONSTRAINT fk_events_categories FOREIGN KEY (category_id)
         REFERENCES public.categories (id)

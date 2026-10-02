@@ -17,23 +17,18 @@ public class EventMapper {
             @NonNull Event event,
             UserShortDto initiator,
             long confirmedRequests,
-            long views) {
+            double rating) {
 
         return EventShortDto.builder()
                 .annotation(event.getAnnotation())
-                .category(
-                        CategoryMapper.toDto(
-                                event.getCategory()
-                        )
-                )
+                .category(CategoryMapper.toDto(event.getCategory()))
                 .confirmedRequests(confirmedRequests)
                 .eventDate(event.getEventDate())
                 .id(event.getId())
                 .initiator(initiator)
                 .paid(event.isPaid())
                 .title(event.getTitle())
-                .views(views)
-                .rate(event.getRate())
+                .rating(rating)
                 .build();
     }
 
@@ -41,16 +36,12 @@ public class EventMapper {
             @NonNull Event event,
             UserShortDto initiator,
             long confirmedRequests,
-            long views) {
+            double rating) {
 
         return EventFullDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
-                .category(
-                        CategoryMapper.toDto(
-                                event.getCategory()
-                        )
-                )
+                .category(CategoryMapper.toDto(event.getCategory()))
                 .confirmedRequests(confirmedRequests)
                 .createdOn(event.getCreatedOn())
                 .description(event.getDescription())
@@ -58,17 +49,12 @@ public class EventMapper {
                 .initiator(initiator)
                 .location(event.getLocation())
                 .paid(event.isPaid())
-                .participantLimit(
-                        event.getParticipantLimit()
-                )
+                .participantLimit(event.getParticipantLimit())
                 .publishedOn(event.getPublishedOn())
-                .requestModeration(
-                        event.isRequestModeration()
-                )
+                .requestModeration(event.isRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())
-                .views(views)
-                .rate(event.getRate())
+                .rating(rating)
                 .build();
     }
 
@@ -88,23 +74,13 @@ public class EventMapper {
                 .eventDate(dto.eventDate())
                 .initiatorId(initiatorId)
                 .location(dto.location())
-                .paid(
-                        dto.paid() != null
-                                && dto.paid()
-                )
-                .participantLimit(
-                        dto.participantLimit() == null
-                                ? 0
-                                : dto.participantLimit()
-                )
+                .paid(dto.paid() != null && dto.paid())
+                .participantLimit(dto.participantLimit() == null ? 0 : dto.participantLimit())
                 .publishedOn(publishedOn)
-                .requestModeration(
-                        dto.requestModeration() == null
-                                || dto.requestModeration()
-                )
+                .requestModeration(dto.requestModeration() == null || dto.requestModeration())
                 .state(state)
                 .title(dto.title())
-                .rate(0)
+                .rating(0.0)
                 .build();
     }
 
@@ -116,52 +92,20 @@ public class EventMapper {
             Category category) {
 
         return oldEvent.toBuilder()
-                .annotation(
-                        request.annotation() != null
-                                ? request.annotation()
-                                : oldEvent.getAnnotation()
-                )
-                .category(
-                        category != null
-                                ? category
-                                : oldEvent.getCategory()
-                )
-                .description(
-                        request.description() != null
-                                ? request.description()
-                                : oldEvent.getDescription()
-                )
-                .eventDate(
-                        request.eventDate() != null
-                                ? request.eventDate()
-                                : oldEvent.getEventDate()
-                )
-                .location(
-                        request.location() != null
-                                ? request.location()
-                                : oldEvent.getLocation()
-                )
-                .paid(
-                        request.paid() != null
-                                ? request.paid()
-                                : oldEvent.isPaid()
-                )
-                .participantLimit(
-                        request.participantLimit() != null
-                                ? request.participantLimit()
-                                : oldEvent.getParticipantLimit()
-                )
-                .requestModeration(
-                        request.requestModeration() != null
-                                ? request.requestModeration()
-                                : oldEvent.isRequestModeration()
-                )
+                .annotation(request.annotation() != null ? request.annotation() : oldEvent.getAnnotation())
+                .category(category != null ? category : oldEvent.getCategory())
+                .description(request.description() != null ? request.description() : oldEvent.getDescription())
+                .eventDate(request.eventDate() != null ? request.eventDate() : oldEvent.getEventDate())
+                .location(request.location() != null ? request.location() : oldEvent.getLocation())
+                .paid(request.paid() != null ? request.paid() : oldEvent.isPaid())
+                .participantLimit(request.participantLimit() != null
+                        ? request.participantLimit()
+                        : oldEvent.getParticipantLimit())
+                .requestModeration(request.requestModeration() != null
+                        ? request.requestModeration()
+                        : oldEvent.isRequestModeration())
                 .state(state)
-                .title(
-                        request.title() != null
-                                ? request.title()
-                                : oldEvent.getTitle()
-                )
+                .title(request.title() != null ? request.title() : oldEvent.getTitle())
                 .publishedOn(publishedOn)
                 .build();
     }
@@ -173,41 +117,29 @@ public class EventMapper {
         if (request == null) {
             return;
         }
-
         if (request.annotation() != null) {
             event.setAnnotation(request.annotation());
         }
-
         if (request.description() != null) {
             event.setDescription(request.description());
         }
-
         if (request.title() != null) {
             event.setTitle(request.title());
         }
-
         if (request.eventDate() != null) {
             event.setEventDate(request.eventDate());
         }
-
         if (request.location() != null) {
             event.setLocation(request.location());
         }
-
         if (request.paid() != null) {
             event.setPaid(request.paid());
         }
-
         if (request.participantLimit() != null) {
-            event.setParticipantLimit(
-                    request.participantLimit()
-            );
+            event.setParticipantLimit(request.participantLimit());
         }
-
         if (request.requestModeration() != null) {
-            event.setRequestModeration(
-                    request.requestModeration()
-            );
+            event.setRequestModeration(request.requestModeration());
         }
     }
 }

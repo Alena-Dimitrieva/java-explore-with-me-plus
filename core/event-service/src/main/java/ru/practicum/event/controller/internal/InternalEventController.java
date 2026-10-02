@@ -16,46 +16,18 @@ public class InternalEventController {
     private final EventRepository eventRepository;
 
     @GetMapping("/{eventId}")
-    public EventInternalDto getEvent(
-            @PathVariable Long eventId) {
-
-        Event event =
-                eventRepository.findById(eventId)
-                        .orElseThrow(
-                                () -> new NotFoundException(
-                                        "Событие с id="
-                                                + eventId
-                                                + " не найдено"
-                                )
-                        );
+    public EventInternalDto getEvent(@PathVariable Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Событие с id=" + eventId + " не найдено"
+                ));
 
         return new EventInternalDto(
                 event.getId(),
                 event.getInitiatorId(),
-                event.getState()
-                        == EventState.PUBLISHED,
+                event.getState() == EventState.PUBLISHED,
                 event.getParticipantLimit(),
                 event.isRequestModeration()
         );
-    }
-
-    @PatchMapping("/{eventId}/rate")
-    public void updateRate(
-            @PathVariable Long eventId,
-            @RequestParam("rate") long rate) {
-
-        Event event =
-                eventRepository.findById(eventId)
-                        .orElseThrow(
-                                () -> new NotFoundException(
-                                        "Событие с id="
-                                                + eventId
-                                                + " не найдено"
-                                )
-                        );
-
-        event.setRate(rate);
-
-        eventRepository.save(event);
     }
 }

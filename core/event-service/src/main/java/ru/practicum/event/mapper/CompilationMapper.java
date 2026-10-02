@@ -19,7 +19,7 @@ public class CompilationMapper {
             @NonNull Compilation compilation,
             @NonNull Map<Long, UserShortDto> initiators,
             @NonNull Map<Long, Long> confirmedRequests,
-            @NonNull Map<Long, Long> views) {
+            @NonNull Map<Long, Double> ratings) {
 
         return CompilationDto.builder()
                 .id(compilation.getId())
@@ -38,9 +38,9 @@ public class CompilationMapper {
                                                         event.getId(),
                                                         0L
                                                 ),
-                                                views.getOrDefault(
+                                                ratings.getOrDefault(
                                                         event.getId(),
-                                                        0L
+                                                        0.0
                                                 )
                                         )
                                 )
